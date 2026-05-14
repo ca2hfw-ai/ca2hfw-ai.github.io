@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CA2HFW — Humberto Fuentes Martínez</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --amber: #f5a623;
+    --amber-dark: #c47d0e;
+    --amber-glow: rgba(245,166,35,0.15);
+    --phosphor: #39ff6a;
+    --phosphor-dim: #1a7a35;
+    --phosphor-glow: rgba(57,255,106,0.12);
+    --bg: #060b14;
+    --bg2: #0c1523;
+    --bg3: #0f1e32;
+    --card: #0d1a2b;
+    --border: rgba(245,166,35,0.25);
+    --border-green: rgba(57,255,106,0.2);
+    --text: #e8dfc8;
+    --text-dim: #8a8070;
+    --red: #ff4444;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.07) 2px,
+      rgba(0,0,0,0.07) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; width: 100%;
+    background: rgba(6,11,20,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    padding: 0 2rem;
+  }
+
+  nav .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+
+  .nav-call {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--amber);
+    letter-spacing: 0.15em;
+    text-decoration: none;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 0.2rem;
+  }
+
+  nav ul a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.7rem;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    transition: all 0.2s;
+  }
+
+  nav ul a:hover {
+    color: var(--amber);
+    border-color: var(--border);
+    background: var(--amber-glow);
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    position: fixed;
+    bottom: 0; width: 100%;
+    background: rgba(6,11,20,0.95);
+    border-top: 1px solid var(--border);
+    padding: 0.3rem 2rem;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--phosphor);
+    animation: blink 1.5s infinite;
+    display: inline-block;
+    margin-right: 0.4rem;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+  /* HERO */
+  #inicio {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding-top: 60px;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(245,166,35,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,166,35,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-radial {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,166,35,0.08) 0%, transparent 65%);
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%,-50%) scale(1.1); opacity: 0.6; }
+  }
+
+  /* Rotating rings */
+  .ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    border-radius: 50%;
+    border: 1px solid;
+    transform: translate(-50%, -50%);
+  }
+
+  .ring-1 {
+    width: 320px; height: 320px;
+    border-color: rgba(245,166,35,0.12);
+    animation: spin 25s linear infinite;
+  }
+  .ring-2 {
+    width: 480px; height: 480px;
+    border-color: rgba(57,255,106,0.07);
+    animation: spin 40s linear infinite reverse;
+  }
+  .ring-3 {
+    width: 640px; height: 640px;
+    border-color: rgba(245,166,35,0.05);
+    animation: spin 60s linear infinite;
+  }
+
+  @keyframes spin { from { transform: translate(-50%,-50%) rotate(0deg); } to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+  .hero-content {
+    position: relative;
+    text-align: center;
+    padding: 2rem;
+    animation: fadeInUp 1.2s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .callsign {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 900;
+    color: var(--amber);
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 60px rgba(245,166,35,0.4), 0 0 120px rgba(245,166,35,0.15);
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+
+  .hero-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+    color: var(--text-dim);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .hero-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(0.65rem, 1.5vw, 0.85rem);
+    color: var(--phosphor);
+    letter-spacing: 0.2em;
+    opacity: 0.85;
+    margin-bottom: 2.5rem;
+  }
+
+  .morse {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1rem;
+    color: var(--amber);
+    opacity: 0.4;
+    letter-spacing: 0.3em;
+    margin-bottom: 2rem;
+  }
+
+  .hero-btns {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.7rem 1.5rem;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: all 0.25s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--amber);
+    color: var(--bg);
+    font-weight: 700;
+  }
+  .btn-primary:hover { background: #ffc140; box-shadow: 0 0 24px rgba(245,166,35,0.5); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--phosphor);
+    border: 1px solid var(--border-green);
+  }
+  .btn-outline:hover { background: var(--phosphor-glow); box-shadow: 0 0 16px rgba(57,255,106,0.2); }
+
+  /* SECTIONS */
+  section {
+    padding: 5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--phosphor);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+    opacity: 0.7;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.05em;
+  }
+
+  .section-title span { color: var(--amber); }
+
+  .section-line {
+    width: 60px; height: 2px;
+    background: linear-gradient(90deg, var(--amber), transparent);
+    margin-bottom: 2.5rem;
+  }
+
+  /* ABOUT */
+  #sobre .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .about-text p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 1.2rem;
+    opacity: 0.85;
+  }
+
+  .about-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--amber);
+  }
+
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--amber);
+    display: block;
+  }
+
+  .stat-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  /* DIPLOMAS & QSL */
+  #diplomas .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .diploma-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .diploma-card:hover {
+    border-color: var(--amber);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 40px rgba(245,166,35,0.15);
+  }
+
+  .diploma-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--amber), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .diploma-card:hover::after { opacity: 1; }
+
+  .diploma-icon {
+    font-size: 2rem;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .diploma-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    color: var(--amber);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.05em;
+  }
+
+  .diploma-info {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .diploma-badge {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+    letter-spacing: 0.1em;
+  }
+
+  .badge-gold { background: rgba(245,166,35,0.2); color: var(--amber); border: 1px solid var(--border); }
+  .badge-green { background: rgba(57,255,106,0.1); color: var(--phosphor); border: 1px solid var(--border-green); }
+
+  /* QSL SECTION */
+  .qsl-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .qsl-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    aspect-ratio: 16/11;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .qsl-card:hover {
+    border-color: var(--phosphor-dim);
+    box-shadow: 0 4px 20px var(--phosphor-glow);
+  }
+
+  .qsl-call {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--phosphor);
+    letter-spacing: 0.1em;
+  }
+
+  .qsl-info {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    margin-top: 0.3rem;
+    line-height: 1.5;
+  }
+
+  .qsl-corner {
+    position: absolute;
+    top: 0.4rem; right: 0.4rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--amber);
+    opacity: 0.6;
+  }
+
+  /* GALERÍA */
+  #galeria .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    gap: 1rem;
+  }
+
+  .photo-item {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .photo-item:hover { border-color: var(--amber); }
+
+  .photo-item.wide { grid-column: span 2; }
+  .photo-item.tall { grid-row: span 2; }
+
+  .photo-placeholder {
+    width: 100%;
+    aspect-ratio: 16/10;
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .photo-item.wide .photo-placeholder { aspect-ratio: 32/10; }
+  .photo-item.tall .photo-placeholder { aspect-ratio: 16/20; }
+
+  .photo-icon { font-size: 2rem; opacity: 0.3; }
+
+  .photo-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(6,11,20,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .photo-item:hover .photo-overlay { opacity: 1; }
+
+  .photo-overlay span {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--amber);
+    border: 1px solid var(--border);
+    padding: 0.4rem 0.8rem;
+    border-radius: 3px;
+  }
+
+  .upload-hint {
+    background: var(--card);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  .upload-hint p {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  /* LOGROS */
+  #logros .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--amber), var(--phosphor-dim), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-left: 1.5rem;
+    animation: fadeInLeft 0.6s ease-out both;
+  }
+
+  @keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 0.4rem;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 12px rgba(245,166,35,0.5);
+  }
+
+  .timeline-year {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    color: var(--amber);
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+
+  .timeline-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+
+  .timeline-desc {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  /* BLOG/INVESTIGACIÓN */
+  #investigacion .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .blog-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .blog-card:hover {
+    border-color: var(--amber);
+    box-shadow: 0 8px 30px rgba(245,166,35,0.1);
+    transform: translateY(-3px);
+  }
+
+  .blog-tag-bar {
+    padding: 0.7rem 1.2rem;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .blog-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+  }
+
+  .tag-ant { background: rgba(57,255,106,0.1); color: var(--phosphor); }
+  .tag-eq { background: rgba(245,166,35,0.15); color: var(--amber); }
+  .tag-dx { background: rgba(100,150,255,0.15); color: #6496ff; }
+  .tag-prop { background: rgba(255,100,100,0.15); color: #ff6464; }
+
+  .blog-body {
+    padding: 1.2rem;
+  }
+
+  .blog-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+  }
+
+  .blog-excerpt {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .blog-meta {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .blog-read-more {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--amber);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: border-color 0.2s;
+  }
+
+  .blog-read-more:hover { border-color: var(--amber); }
+
+  /* LIBRO DE VISITAS */
+  #visitas .guestbook {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  .guestbook-form {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+
+  .guestbook-form h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    color: var(--amber);
+    letter-spacing: 0.08em;
+    margin-bottom: 1.2rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .form-group label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0.6rem 0.8rem;
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: var(--amber);
+    box-shadow: 0 0 10px rgba(245,166,35,0.1);
+  }
+
+  .form-group textarea { min-height: 100px; }
+
+  .btn-submit {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--amber);
+    color: var(--bg);
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    font-weight: 700;
+    width: 100%;
+    margin-top: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .btn-submit:hover { background: #ffc140; box-shadow: 0 0 20px rgba(245,166,35,0.4); }
+
+  .guestbook-entries { display: flex; flex-direction: column; gap: 1rem; }
+
+  .entry {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    padding: 1rem 1.2rem;
+    animation: fadeInUp 0.4s ease-out;
+  }
+
+  .entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .entry-call {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    color: var(--amber);
+    font-weight: 700;
+  }
+
+  .entry-date {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.58rem;
+    color: var(--text-dim);
+  }
+
+  .entry-text {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.7;
+    opacity: 0.85;
+  }
+
+  /* SEPARADORES */
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+
+  .footer-call {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--amber);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .footer-morse {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--amber);
+    opacity: 0.3;
+    letter-spacing: 0.4em;
+    margin-bottom: 1rem;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-links a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--amber); }
+
+  .footer-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-dim);
+    opacity: 0.5;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav ul { display: none; }
+    #sobre .about-grid { grid-template-columns: 1fr; }
+    #galeria .photo-grid { grid-template-columns: 1fr; }
+    .photo-item.wide { grid-column: auto; }
+    .photo-item.tall { grid-row: auto; }
+    #visitas .guestbook { grid-template-columns: 1fr; }
+    .about-stats { grid-template-columns: 1fr 1fr; }
+    .status-bar { display: none; }
+  }
+
+  /* Cursor personalizado */
+  body { cursor: crosshair; }
+  a, button { cursor: pointer; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#inicio" class="nav-call">CA2HFW</a>
+    <ul>
+      <li><a href="#sobre">Sobre mí</a></li>
+      <li><a href="#diplomas">Diplomas</a></li>
+      <li><a href="#galeria">Galería</a></li>
+      <li><a href="#logros">Logros</a></li>
+      <li><a href="#investigacion">Investigación</a></li>
+      <li><a href="#visitas">Visitas</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <span><span class="status-dot"></span> QRV · 14.225 MHz</span>
+  <span>MODE: SSB / FT8</span>
+  <span>QTH: La Serena, Chile · FG40</span>
+  <span>PWR: 100W</span>
+  <span id="utc-clock"></span>
+</div>
+
+<!-- HERO -->
+<section id="inicio" style="max-width:100%; padding:0;">
+  <div style="min-height:100vh; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; padding-top:60px;">
+    <div class="hero-grid"></div>
+    <div class="hero-radial"></div>
+    <div class="ring ring-1"></div>
+    <div class="ring ring-2"></div>
+    <div class="ring ring-3"></div>
+
+    <div class="hero-content">
+      <div class="morse">-.-. .- ..--- .... ..-. .--</div>
+      <div class="callsign">CA2HFW</div>
+      <div class="hero-name">Humberto Fuentes Martínez</div>
+      <div class="hero-title">▸ Radioaficionado · FG40 · La Serena, Chile</div>
+      <div class="hero-btns">
+        <a href="#sobre" class="btn btn-primary">Conocer más</a>
+        <a href="#visitas" class="btn btn-outline">Libro de Visitas</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SOBRE MÍ -->
+<section id="sobre">
+  <div class="section-label">// 01</div>
+  <h2 class="section-title">Sobre <span>mí</span></h2>
+  <div class="section-line"></div>
+
+  <div class="about-grid">
+    <div class="about-text">
+      <div style="display:flex; align-items:flex-start; gap:1.5rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+        <img src="https://cdn-bio.qrz.com/w/ca2hfw/IMG_20230520_WA0033.jpg"
+             alt="Humberto Fuentes Martínez CA2HFW"
+             style="width:120px; height:120px; object-fit:cover; border-radius:4px; border:2px solid var(--amber); flex-shrink:0; box-shadow: 0 0 20px rgba(245,166,35,0.25);">
+        <div>
+          <p style="font-size:1rem; line-height:1.8; color:var(--text); margin-bottom:0.8rem; opacity:0.85;">Soy Humberto Fuentes Martínez, radioaficionado activo desde La Serena, Región de Coquimbo, Chile (locator FG40). La radio no es solo un hobby — es un puente entre el pasado analógico y el futuro digital de las comunicaciones.</p>
+        </div>
+      </div>
+      <p style="font-size:1rem; line-height:1.8; color:var(--text); margin-bottom:1.2rem; opacity:0.85;">Desde mis primeros contactos en HF hasta los concursos internacionales, cada QSO es una historia. Me apasiona la construcción de antenas experimentales, el estudio de la propagación ionosférica y compartir este arte con la comunidad.</p>
+      <p style="font-size:1rem; line-height:1.8; color:var(--text); margin-bottom:1.2rem; opacity:0.85;">Con más de 16.000 búsquedas en QRZ.com y 11 diplomas internacionales obtenidos entre 2023 y 2026, mantengo una presencia activa en bandas de 10 y 40 metros en modos SSB, FT8 y mixto.</p>
+    </div>
+    <div class="about-stats">
+      <div class="stat-card">
+        <span class="stat-num">16K+</span>
+        <span class="stat-label">Búsquedas QRZ</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-num">11</span>
+        <span class="stat-label">Diplomas QRZ</span>
+      </div>
+      <div class="stat-card" style="border-color: rgba(57,255,106,0.3);">
+        <span class="stat-num" style="color: var(--phosphor);">FG40</span>
+        <span class="stat-label">Locator Maidenhead</span>
+      </div>
+      <div class="stat-card" style="border-color: rgba(57,255,106,0.3);">
+        <span class="stat-num" style="color: var(--phosphor);">10/40</span>
+        <span class="stat-label">Bandas activas (m)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- DIPLOMAS Y QSLs -->
+<section id="diplomas">
+  <div class="section-label">// 02</div>
+  <h2 class="section-title">Diplomas <span>&amp;</span> QSLs</h2>
+  <div class="section-line"></div>
+
+  <div class="grid-3">
+
+    <!-- POTA Diamond Hunter -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1kA1Lu2qhVw2iJX1Zy5D5nwXHxN0tOAb5/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">💎</span>
+      <div class="diploma-badge badge-gold">POTA</div>
+      <div class="diploma-title">Diamond Hunter</div>
+      <div class="diploma-info">Parks On The Air<br>2026 · HF Mixto · Ver PDF →</div>
+    </div>
+
+    <!-- POTA Platinum Hunter -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1ao85s7TSES2o9_8x2zdq1rawQJ2q_Gvu/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">🏆</span>
+      <div class="diploma-badge badge-gold">POTA</div>
+      <div class="diploma-title">Platinum Hunter</div>
+      <div class="diploma-info">Parks On The Air<br>2026 · HF Mixto · Ver PDF →</div>
+    </div>
+
+    <!-- POTA Gold Hunter -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1sJbCYDHNGPLzCdlgNtOOnq8S3n_QwJLT/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">🥇</span>
+      <div class="diploma-badge badge-gold">POTA</div>
+      <div class="diploma-title">Gold Hunter</div>
+      <div class="diploma-info">Parks On The Air<br>2026 · HF Mixto · Ver PDF →</div>
+    </div>
+
+    <!-- POTA Sapphire Hunter -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1mWoYVeHKCTbhlMxd2iY9sx7PquYPhNks/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">💠</span>
+      <div class="diploma-badge badge-gold">POTA</div>
+      <div class="diploma-title">Sapphire Hunter</div>
+      <div class="diploma-info">Parks On The Air<br>2026 · HF Mixto · Ver PDF →</div>
+    </div>
+
+    <!-- POTA Silver Hunter -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1fwT0FEMwjA9QN6SvtzVzAzH0ch6Hga69/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">🥈</span>
+      <div class="diploma-badge badge-gold">POTA</div>
+      <div class="diploma-title">Silver Hunter</div>
+      <div class="diploma-info">Parks On The Air<br>2025 · HF Mixto · Ver PDF →</div>
+    </div>
+
+    <!-- POTA Bronze Hunter -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1DOecyNmt0MpWavwerI9Mw2Ds3b2OsgmC/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">🥉</span>
+      <div class="diploma-badge badge-green">POTA</div>
+      <div class="diploma-title">Bronze Hunter</div>
+      <div class="diploma-info">Parks On The Air<br>2025 · HF Mixto · Ver PDF →</div>
+    </div>
+
+    <!-- POTA DX Hunter -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1FtvY1_6kpwnr15rJgduvkTWEuRCRXZwv/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">🌍</span>
+      <div class="diploma-badge badge-green">POTA</div>
+      <div class="diploma-title">DX Hunter</div>
+      <div class="diploma-info">Parks On The Air · DX<br>2025 · Internacional · Ver PDF →</div>
+    </div>
+
+    <!-- POTA Support Your Parks Hunter -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1WPl-_Y4vFyuAlvBnSUVGcTKQ8DqGSOhz/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">🌲</span>
+      <div class="diploma-badge badge-green">POTA</div>
+      <div class="diploma-title">Support Your Parks</div>
+      <div class="diploma-info">Parks On The Air<br>2026 · HF Mixto · Ver PDF →</div>
+    </div>
+
+    <!-- POTA New Year's Hunter -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1hZIUVWKYwWPc83zRswsgsgynL6e0MZWL/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">🎆</span>
+      <div class="diploma-badge badge-green">POTA</div>
+      <div class="diploma-title">New Year's Hunter</div>
+      <div class="diploma-info">Parks On The Air<br>2026 · Especial · Ver PDF →</div>
+    </div>
+
+    <!-- LLOTA Award -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1madjm1b470jR-DUxZ9nB2A7jsrsom9Js/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">🏝️</span>
+      <div class="diploma-badge badge-gold">LLOTA</div>
+      <div class="diploma-title">LLOTA Award #1375</div>
+      <div class="diploma-info">Lakes, Lagoons & Offshore Islands<br>Feb 2026 · Ver PDF →</div>
+    </div>
+
+    <!-- IARU 2G SSB -->
+    <div class="diploma-card" onclick="window.open('https://drive.google.com/file/d/1J9a1VycI11SRlXinSbmND-OFIjzeVuPp/view','_blank')" style="cursor:pointer;">
+      <span class="diploma-icon">📡</span>
+      <div class="diploma-badge badge-gold">IARU</div>
+      <div class="diploma-title">IARU 2G Certificado SSB</div>
+      <div class="diploma-info">International Amateur Radio Union<br>Dic 2025 · 2G · SSB · Ver PDF →</div>
+    </div>
+
+    <div class="diploma-card" style="border-style: dashed; cursor: default; opacity: 0.4;">
+      <span class="diploma-icon">＋</span>
+      <div class="diploma-title" style="color: var(--text-dim);">Próximo diploma</div>
+      <div class="diploma-info">¡Sigue sumando contactos<br>y llega el siguiente!</div>
+    </div>
+
+  </div>
+
+  <!-- QSLs -->
+  <h3 style="font-family:'Orbitron',monospace; font-size:0.9rem; color:var(--text); margin-top:3.5rem; margin-bottom:0.3rem; letter-spacing:0.08em;">Colección <span style="color:var(--amber);">QSL</span> — Los 10 más lejanos</h3>
+  <p style="font-family:'Share Tech Mono',monospace; font-size:0.68rem; color:var(--text-dim); margin-bottom:1.2rem; letter-spacing:0.05em;">Tarjetas de confirmación de contactos DX notables · ordenados por distancia</p>
+
+  <div class="qsl-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+
+    <!-- KK7ZZM — USA (más lejano) -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1FVMbz30Z5JdaSN2Nl4Lr5AMputCtzwGb&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇺🇸 USA</div>
+      <div class="photo-overlay"><span>KK7ZZM · 10m FT8 · Abr 2026</span></div>
+    </div>
+
+    <!-- YY4PPC — Venezuela -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1KgWrAHrDDJkyhiev3NtyA9RVMIAa39oP&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇻🇪 Venezuela</div>
+      <div class="photo-overlay"><span>YY4PPC · QSL Digital</span></div>
+    </div>
+
+    <!-- PU2LQX — Brasil -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1IVLfpiyY7Ua-ru1hILWKR0DLRCFhylKW&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇧🇷 Brasil</div>
+      <div class="photo-overlay"><span>PU2LQX · 10m FT8 · May 2026</span></div>
+    </div>
+
+    <!-- LW9EUW — Argentina -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1tTTd1phLpN1A4qxkQK_XpbQytcPTkZxJ&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇦🇷 Argentina</div>
+      <div class="photo-overlay"><span>LW9EUW · Abr 2024</span></div>
+    </div>
+
+    <!-- LU6VAI — Argentina -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1nbj3vxeJRhFpULQXHbaj4wnMJy0-CbWI&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇦🇷 Argentina</div>
+      <div class="photo-overlay"><span>LU6VAI · Abr 2026</span></div>
+    </div>
+
+    <!-- LU7DLS — Argentina -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=16l6Px8dELUnscEsx53uVfjYceD6qtCW1&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇦🇷 Argentina</div>
+      <div class="photo-overlay"><span>LU7DLS · Sep 2024</span></div>
+    </div>
+
+    <!-- LU8HLB — Argentina -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1YCSI4D-iwabykNrqPwkCdzkEr7kXOJiY&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇦🇷 Argentina</div>
+      <div class="photo-overlay"><span>LU8HLB · Feb 2025</span></div>
+    </div>
+
+    <!-- LU2EWW — Argentina -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=15Hi0L0sTRyb3YIKX9r0ac_3K198gtrd7&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇦🇷 Argentina</div>
+      <div class="photo-overlay"><span>LU2EWW · Abr 2026</span></div>
+    </div>
+
+    <!-- LU2FWK — Argentina -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1mKibW1Wq48AqS3zpSNOF4Yp3Qp01N0eu&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇦🇷 Argentina</div>
+      <div class="photo-overlay"><span>LU2FWK · Abr 2026</span></div>
+    </div>
+
+    <!-- CA2VJM — Chile (QSL propia) -->
+    <div class="qsl-card" style="padding:0; overflow:hidden; position:relative; aspect-ratio:16/11; cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1ZIgD1OPNqPuIEk1T18nEApB_9GsQWrhd&sz=w600" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+      <div class="qsl-corner">🇨🇱 Chile</div>
+      <div class="photo-overlay"><span>CA2VJM · QSL CA2HFW</span></div>
+    </div>
+
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div id="lightbox" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:9998; align-items:center; justify-content:center; padding:2rem;" onclick="document.getElementById('lightbox').style.display='none'">
+    <img id="lightbox-img" src="" style="max-width:90vw; max-height:85vh; border:2px solid var(--amber); border-radius:4px; box-shadow:0 0 60px rgba(245,166,35,0.3);">
+    <div style="position:absolute; top:1rem; right:1.5rem; font-family:'Share Tech Mono',monospace; font-size:0.75rem; color:var(--amber); cursor:pointer; opacity:0.7;">✕ cerrar</div>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- GALERÍA -->
+<section id="galeria">
+  <div class="section-label">// 03</div>
+  <h2 class="section-title">Galería <span>de Fotos</span></h2>
+  <div class="section-line"></div>
+
+  <div class="photo-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+
+    <!-- FOTO 1 — wide: FT8 map screenshot -->
+    <div class="photo-item wide" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1kEnaX7RqLGvGYkFVAs25uTNMXSkJbhQc&sz=w900" style="width:100%;height:100%;object-fit:cover;" alt="CA2HFW FT8 10m contactos mundiales">
+      <div class="photo-overlay"><span>Mapa FT8 · 10m · Abr 2026</span></div>
+    </div>
+
+    <!-- FOTO 2 — tall: foto personal -->
+    <div class="photo-item tall" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1ByBBIz1i2DDDhikMasZrfe5FQGTOFiFe&sz=w600" style="width:100%;height:100%;object-fit:cover;" alt="Humberto CA2HFW en operación">
+      <div class="photo-overlay"><span>CA2HFW en operación</span></div>
+    </div>
+
+    <!-- FOTO 3 -->
+    <div class="photo-item" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1sV2mEhKx0w8ODaAIkgZvZNnkc6d9bF7G&sz=w600" style="width:100%;height:100%;object-fit:cover;" alt="CA2HFW estación">
+      <div class="photo-overlay"><span>Estación CA2HFW</span></div>
+    </div>
+
+    <!-- FOTO 4 -->
+    <div class="photo-item" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1htIELQVk45a6sjFsOWyDleo2dAf6u54R&sz=w600" style="width:100%;height:100%;object-fit:cover;" alt="FT8 10m contactos">
+      <div class="photo-overlay"><span>FT8 · 10m · May 2024</span></div>
+    </div>
+
+    <!-- FOTO 5 — wide: actividad campo -->
+    <div class="photo-item wide" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1dC8ZvXnow39DsoCVo5L9EXPBZxKZxtUW&sz=w900" style="width:100%;height:100%;object-fit:cover;" alt="Actividad campo radioaficionados">
+      <div class="photo-overlay"><span>Actividad de campo · Dic 2023</span></div>
+    </div>
+
+    <!-- FOTO 6 -->
+    <div class="photo-item" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1UmkpuSYh1VG9xPDXLnoF2jYnJBfMA8aZ&sz=w600" style="width:100%;height:100%;object-fit:cover;" alt="Actividad radioaficionados">
+      <div class="photo-overlay"><span>Actividad grupal · Dic 2023</span></div>
+    </div>
+
+    <!-- FOTO 7 -->
+    <div class="photo-item" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1arEb2teMWy0cWLoR9NPkBxQgQ4geGoj9&sz=w600" style="width:100%;height:100%;object-fit:cover;" alt="Equipo radioaficionado">
+      <div class="photo-overlay"><span>Equipos · Nov 2023</span></div>
+    </div>
+
+    <!-- FOTO 8 -->
+    <div class="photo-item" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1CGxq_s46-jzXMfGG1guFo7Z_gLKhlAuj&sz=w600" style="width:100%;height:100%;object-fit:cover;" alt="Radioaficionados reunión">
+      <div class="photo-overlay"><span>Club · Nov 2023</span></div>
+    </div>
+
+    <!-- FOTO 9 — wide: foto QSO digital -->
+    <div class="photo-item wide" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1mEJTnK2-kPsnEvCa5BIbVpmmGVfEajki&sz=w900" style="width:100%;height:100%;object-fit:cover;" alt="CD3PMT CD2HFW QSO">
+      <div class="photo-overlay"><span>CD3PMT ↔ CD2HFW · QSO confirmado</span></div>
+    </div>
+
+    <!-- FOTO 10 -->
+    <div class="photo-item" style="cursor:pointer;" onclick="openLightbox(this)">
+      <img src="https://drive.google.com/thumbnail?id=1pJ1qamaXvQXxCrxaGwPyM1H2Uncfz3Ju&sz=w600" style="width:100%;height:100%;object-fit:cover;" alt="CA2HFW actividad">
+      <div class="photo-overlay"><span>Actividad · Ene 2025</span></div>
+    </div>
+
+  </div>
+
+  <div class="upload-hint">
+    <p>💡 <strong style="color:var(--amber);">Para agregar más fotos:</strong> súbelas a tu Google Drive → clic derecho → "Obtener enlace" → copia el ID (la parte entre /d/ y /view) → reemplaza el ID en el código donde dice <code style="color:var(--phosphor);">thumbnail?id=TU_ID</code></p>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- LOGROS -->
+<section id="logros">
+  <div class="section-label">// 04</div>
+  <h2 class="section-title">Mis <span>Logros</span></h2>
+  <div class="section-line"></div>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-year">ABRIL 2026</div>
+      <div class="timeline-title">USA 250th Anniversary Award #5883</div>
+      <div class="timeline-desc">Diploma conmemorativo por el 250° aniversario de los Estados Unidos de América, otorgado por QRZ.COM. Obtenido en HF modo mixto.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">ABRIL 2026</div>
+      <div class="timeline-title">United States Award #33542</div>
+      <div class="timeline-desc">Diploma USA por contactos confirmados con estaciones de los Estados Unidos. Endorsement en 10M Mixed.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">ENERO 2026</div>
+      <div class="timeline-title">12 Days of QRZ 2025 #13922</div>
+      <div class="timeline-desc">Tercer año consecutivo completando el challenge de los 12 días de QRZ. Endorsements en 10M y 40M Mixed.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">SEPTIEMBRE 2025</div>
+      <div class="timeline-title">Master of Radio Communication – Europe #52528</div>
+      <div class="timeline-desc">Diploma MRCEU de QRZ.COM por haber establecido contactos confirmados con estaciones de todos los países europeos en HF.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">MAYO 2025</div>
+      <div class="timeline-title">US Counties Award #48889 — 250 Counties</div>
+      <div class="timeline-desc">Diploma USCA por contactos con 250 condados de los EE.UU. confirmados en modo mixto. Uno de los desafíos de mayor dificultad en HF.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">ENERO 2025</div>
+      <div class="timeline-title">12 Days of QRZ 2024 #9875</div>
+      <div class="timeline-desc">Segundo año completando el challenge navideño de QRZ. Endorsement en 40M Mixed.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">MAYO 2024</div>
+      <div class="timeline-title">Grid Squared Award #68084</div>
+      <div class="timeline-desc">Diploma GSA por contactos confirmados en múltiples cuadrículas Maidenhead. Endorsements en 10M y 40M Mixed.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">MAYO 2024</div>
+      <div class="timeline-title">World Continents Award #65127</div>
+      <div class="timeline-desc">Diploma WCA por haber contactado los 6 continentes habitados en bandas de 10M y 40M modo mixto, confirmados en LoTW.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">ABRIL 2024</div>
+      <div class="timeline-title">World Radio Friendship Award #74298</div>
+      <div class="timeline-desc">Diploma WRFA por contactos de amistad con estaciones de todo el mundo. Endorsements en 10M y 40M Mixed.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">ABRIL 2024</div>
+      <div class="timeline-title">30 Years of QRZ Award #38824</div>
+      <div class="timeline-desc">Diploma conmemorativo por los 30 años de QRZ.COM. Endorsements en 10M y 40M Mixed.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">MARZO 2024</div>
+      <div class="timeline-title">12 Days of QRZ 2023 #15952</div>
+      <div class="timeline-desc">Primer diploma de la serie 12 Days of QRZ, iniciando una racha de 3 años consecutivos completando este challenge internacional.</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- INVESTIGACIÓN / BLOG -->
+<section id="investigacion">
+  <div class="section-label">// 05</div>
+  <h2 class="section-title">Investigación <span>&amp; Blog</span></h2>
+  <div class="section-line"></div>
+
+  <!-- ARTÍCULO PRINCIPAL DESTACADO -->
+  <div style="background: var(--card); border: 1px solid var(--amber); border-radius: 4px; overflow: hidden; margin-bottom: 2.5rem;">
+    <div style="background: var(--bg3); border-bottom: 1px solid var(--border); padding: 0.8rem 1.5rem; display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap;">
+      <span class="blog-tag tag-eq">Equipos</span>
+      <span class="blog-tag tag-eq" style="background:rgba(100,150,255,0.15); color:#6496ff; border-color:rgba(100,150,255,0.3);">Programación</span>
+      <span class="blog-tag tag-ant">Fabricación de Cable</span>
+      <span style="margin-left:auto; font-family:'Share Tech Mono',monospace; font-size:0.6rem; color:var(--amber); border:1px solid var(--border); padding:0.2rem 0.6rem; border-radius:2px;">INVESTIGACIÓN COMPLETA</span>
+    </div>
+    <div style="padding: 2rem;">
+      <h3 style="font-family:'Orbitron',monospace; font-size:1.15rem; color:var(--amber); margin-bottom:0.8rem; letter-spacing:0.04em; line-height:1.4;">
+        Programación de Radio Kirisun FM540: Fabricación de Cable y Resolución de Problemas Paso a Paso
+      </h3>
+      <p style="font-size:0.88rem; color:var(--text); line-height:1.8; margin-bottom:1rem; opacity:0.85;">
+        Todo comenzó con un desafío práctico: tenía en mis manos una radio móvil Kirisun FM540 que necesitaba ser programada con nuevas frecuencias, pero no contaba con el cable de comunicaciones ni con el software correcto. En vez de rendirme o comprar un cable a precio elevado, decidí ir al origen: analizar el esquemático del equipo para fabricar el cable desde cero.
+      </p>
+
+      <div style="border-left:3px solid var(--amber); padding-left:1.2rem; margin:1.5rem 0;">
+        <div style="font-family:'Orbitron',monospace; font-size:0.75rem; color:var(--amber); margin-bottom:0.5rem; letter-spacing:0.08em;">// FASE 1 — ANÁLISIS DEL CIRCUITO</div>
+        <p style="font-size:0.85rem; color:var(--text); line-height:1.8; opacity:0.85;">
+          El primer paso fue estudiar el manual de servicio del FM540. En la página 97 (Figure 7 – KEY Board Schematic), encontré el conector J1 (J1S_FT8100): un RJ45 de 8 pines que sirve tanto para el micrófono como para la programación. El análisis reveló el pinout exacto:
+        </p>
+        <div style="font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--phosphor); background:var(--bg); border:1px solid var(--border-green); border-radius:3px; padding:0.8rem 1rem; margin-top:0.8rem; line-height:1.8;">
+          Pin 1 → MD &nbsp;&nbsp;(Microphone Data / TXD hacia radio)<br>
+          Pin 6 → GND (Tierra / masa)<br>
+          Pin 8 → RXD (Datos desde el radio)<br>
+          <span style="color:var(--text-dim);">⚠ Señal TTL 3.3V — no conectar directo a RS-232</span>
+        </div>
+      </div>
+
+      <div style="border-left:3px solid var(--phosphor-dim); padding-left:1.2rem; margin:1.5rem 0;">
+        <div style="font-family:'Orbitron',monospace; font-size:0.75rem; color:var(--phosphor); margin-bottom:0.5rem; letter-spacing:0.08em;">// FASE 2 — FABRICACIÓN DEL CABLE</div>
+        <p style="font-size:0.85rem; color:var(--text); line-height:1.8; opacity:0.85;">
+          Con el pinout claro, corté un cable CAT5e de fábrica y usé un adaptador USB-Serial CP2102. Los 3 hilos necesarios (solo 3 de los 8 pines se usan para programación) se conectaron así:
+        </p>
+        <div style="font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--phosphor); background:var(--bg); border:1px solid var(--border-green); border-radius:3px; padding:0.8rem 1rem; margin-top:0.8rem; line-height:2;">
+          RJ45 Pin 1 (naranja/blanco) → RX del CP2102 (blanco)<br>
+          RJ45 Pin 6 (verde) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ GND del CP2102 (negro)<br>
+          RJ45 Pin 8 (café) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ TX del CP2102 (verde)<br>
+          <span style="color:var(--red);">VCC rojo → NO CONECTAR ⛔</span>
+        </div>
+      </div>
+
+      <div style="border-left:3px solid rgba(100,150,255,0.5); padding-left:1.2rem; margin:1.5rem 0;">
+        <div style="font-family:'Orbitron',monospace; font-size:0.75rem; color:#6496ff; margin-bottom:0.5rem; letter-spacing:0.08em;">// FASE 3 — PROBLEMÁTICA Y DIAGNÓSTICO</div>
+        <p style="font-size:0.85rem; color:var(--text); line-height:1.8; opacity:0.85; margin-bottom:0.8rem;">
+          Al intentar leer la radio con el CPS FM540 V2.11, apareció el primer obstáculo: <em style="color:var(--amber);">"port is occupied or not connected"</em>. El proceso de diagnóstico incluyó:
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; font-size:0.78rem;">
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:3px; padding:0.7rem;">
+            <div style="color:var(--red); font-family:'Share Tech Mono',monospace; font-size:0.62rem; margin-bottom:0.4rem;">PROBLEMA</div>
+            <div style="color:var(--text); opacity:0.85; line-height:1.6;">CPS no encontraba el puerto COM, aunque el driver CP2102 aparecía en el Administrador de Dispositivos</div>
+          </div>
+          <div style="background:var(--bg); border:1px solid var(--border-green); border-radius:3px; padding:0.7rem;">
+            <div style="color:var(--phosphor); font-family:'Share Tech Mono',monospace; font-size:0.62rem; margin-bottom:0.4rem;">SOLUCIÓN</div>
+            <div style="color:var(--text); opacity:0.85; line-height:1.6;">Ejecutar el CPS como Administrador de Windows y verificar que el número de COM en el software coincida con el del sistema</div>
+          </div>
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:3px; padding:0.7rem;">
+            <div style="color:var(--red); font-family:'Share Tech Mono',monospace; font-size:0.62rem; margin-bottom:0.4rem;">PROBLEMA</div>
+            <div style="color:var(--text); opacity:0.85; line-height:1.6;">El software CPS V2.11 era incompatible con el firmware de la radio: error <em>"Version is error, please select V1.XX"</em></div>
+          </div>
+          <div style="background:var(--bg); border:1px solid var(--border-green); border-radius:3px; padding:0.7rem;">
+            <div style="color:var(--phosphor); font-family:'Share Tech Mono',monospace; font-size:0.62rem; margin-bottom:0.4rem;">SOLUCIÓN</div>
+            <div style="color:var(--text); opacity:0.85; line-height:1.6;">Contactar a Kirisun directamente (service@kirisun.com) solicitando el CPS V1.29 compatible con MCU Version V01.00. Respondieron en menos de una semana</div>
+          </div>
+          <div style="background:var(--bg); border:1px solid var(--border); border-radius:3px; padding:0.7rem;">
+            <div style="color:var(--red); font-family:'Share Tech Mono',monospace; font-size:0.62rem; margin-bottom:0.4rem;">PROBLEMA</div>
+            <div style="color:var(--text); opacity:0.85; line-height:1.6;">El adaptador CP2102 casero presentaba soldaduras frías — el eco de prueba en PuTTY (COM3, 9600 bps) no respondía</div>
+          </div>
+          <div style="background:var(--bg); border:1px solid var(--border-green); border-radius:3px; padding:0.7rem;">
+            <div style="color:var(--phosphor); font-family:'Share Tech Mono',monospace; font-size:0.62rem; margin-bottom:0.4rem;">SOLUCIÓN</div>
+            <div style="color:var(--text); opacity:0.85; line-height:1.6;">Reemplazar por cable Wakesnow "8 en 1" de fábrica. Conector correcto: <strong style="color:var(--amber);">M2</strong>. Driver CH341SER oficial desde wch.cn</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-left:3px solid var(--phosphor-dim); padding-left:1.2rem; margin:1.5rem 0;">
+        <div style="font-family:'Orbitron',monospace; font-size:0.75rem; color:var(--phosphor); margin-bottom:0.5rem; letter-spacing:0.08em;">// FASE 4 — CONFIGURACIÓN FINAL EXITOSA</div>
+        <p style="font-size:0.85rem; color:var(--text); line-height:1.8; opacity:0.85;">
+          Con el cable Wakesnow (conector M2), el driver CH340 correcto y el CPS V1.29, la radio fue leída exitosamente en un segundo PC con Windows 11. El proceso final fue:
+        </p>
+        <div style="font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--text); background:var(--bg); border:1px solid var(--border); border-radius:3px; padding:0.8rem 1rem; margin-top:0.8rem; line-height:2; counter-reset: step;">
+          <div style="color:var(--amber);">1.</div> Instalar driver CH341SER v3.4 desde wch.cn<br>
+          <div style="color:var(--amber);">2.</div> Conectar cable Wakesnow M2 → COM3<br>
+          <div style="color:var(--amber);">3.</div> Abrir CPS FM540 V1.29 como Administrador<br>
+          <div style="color:var(--amber);">4.</div> Setting → Communication Port → COM3<br>
+          <div style="color:var(--amber);">5.</div> Encender radio → Program → Read → ✅ Lectura exitosa<br>
+          <div style="color:var(--amber);">6.</div> Editar canales y frecuencias → Program → Write → ✅ Grabación exitosa
+        </div>
+      </div>
+
+      <div style="background:var(--bg); border:1px solid var(--border); border-radius:3px; padding:1rem 1.2rem; margin-top:1.5rem;">
+        <div style="font-family:'Orbitron',monospace; font-size:0.72rem; color:var(--amber); margin-bottom:0.6rem; letter-spacing:0.08em;">// CONCLUSIONES Y LECCIONES APRENDIDAS</div>
+        <p style="font-size:0.82rem; color:var(--text); line-height:1.8; opacity:0.85;">
+          Este proyecto demostró que con paciencia y método sistemático es posible resolver cualquier obstáculo técnico. Las claves del éxito fueron: (1) leer el esquemático de servicio para entender el hardware real, (2) verificar cada eslabón de la cadena con herramientas de diagnóstico como PuTTY, (3) contactar directamente al fabricante cuando el software oficial no estaba disponible públicamente, y (4) nunca descartar el hardware físico antes de probarlo con un test de eco.
+        </p>
+        <p style="font-size:0.82rem; color:var(--text); line-height:1.8; opacity:0.85; margin-top:0.5rem;">
+          <strong style="color:var(--amber);">Equipo utilizado:</strong> Kirisun FM540 VHF · Cable Wakesnow 8-en-1 (M2) · CPS V1.29 · Driver CH341SER · Windows 11
+        </p>
+      </div>
+
+      <div style="margin-top:1.2rem; display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+        <div style="font-family:'Share Tech Mono',monospace; font-size:0.62rem; color:var(--text-dim);">📅 Abril 2026 &nbsp;·&nbsp; ⏱ 15 min lectura &nbsp;·&nbsp; CA2HFW</div>
+        <div style="display:flex; gap:0.5rem; margin-left:auto;">
+          <span style="font-family:'Share Tech Mono',monospace; font-size:0.6rem; color:var(--phosphor); background:rgba(57,255,106,0.08); border:1px solid var(--border-green); padding:0.2rem 0.6rem; border-radius:2px;">#Kirisun</span>
+          <span style="font-family:'Share Tech Mono',monospace; font-size:0.6rem; color:var(--amber); background:rgba(245,166,35,0.08); border:1px solid var(--border); padding:0.2rem 0.6rem; border-radius:2px;">#FM540</span>
+          <span style="font-family:'Share Tech Mono',monospace; font-size:0.6rem; color:#6496ff; background:rgba(100,150,255,0.08); border:1px solid rgba(100,150,255,0.2); padding:0.2rem 0.6rem; border-radius:2px;">#Programación</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID DE OTROS ARTÍCULOS -->
+  <div class="blog-grid">
+    <div class="blog-card" style="border-style: dashed; opacity: 0.5; cursor: default;">
+      <div class="blog-body" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height: 160px; text-align:center;">
+        <div style="font-size: 2rem; margin-bottom: 0.8rem;">✏️</div>
+        <div class="blog-title" style="color: var(--text-dim);">Próximo artículo</div>
+        <div class="blog-excerpt">Antenas, DX, propagación... ¿qué investigamos ahora?</div>
+      </div>
+    </div>
+    <div class="blog-card" style="border-style: dashed; opacity: 0.5; cursor: default;">
+      <div class="blog-body" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height: 160px; text-align:center;">
+        <div style="font-size: 2rem; margin-bottom: 0.8rem;">✏️</div>
+        <div class="blog-title" style="color: var(--text-dim);">Próximo artículo</div>
+        <div class="blog-excerpt">Comparte tu experiencia con la comunidad.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- LIBRO DE VISITAS -->
+<section id="visitas">
+  <div class="section-label">// 06</div>
+  <h2 class="section-title">Libro de <span>Visitas</span></h2>
+  <div class="section-line"></div>
+
+  <div class="guestbook">
+    <div class="guestbook-form">
+      <h3>▸ Deja tu mensaje</h3>
+      <div class="form-group">
+        <label>Tu indicativo / nombre</label>
+        <input type="text" id="gb-call" placeholder="CA2XXX o Nombre" maxlength="30">
+      </div>
+      <div class="form-group">
+        <label>País / QTH</label>
+        <input type="text" id="gb-qth" placeholder="Chile · GF55" maxlength="50">
+      </div>
+      <div class="form-group">
+        <label>Mensaje</label>
+        <textarea id="gb-msg" placeholder="73! Great signal here in..." maxlength="300"></textarea>
+      </div>
+      <button class="btn-submit" onclick="addEntry()">▸ Enviar mensaje</button>
+    </div>
+
+    <div class="guestbook-entries" id="entries-list">
+      <!-- Entries cargadas por JS -->
+    </div>
+  </div>
+</section>
+
+<!-- GUÍA DE MODIFICACIONES -->
+<section id="guia" style="background: var(--bg2); border-top: 1px solid var(--border); padding: 4rem 2rem; max-width:100%;">
+<div style="max-width:1000px; margin:0 auto;">
+  <div class="section-label">// GUÍA</div>
+  <h2 class="section-title">Cómo <span>modificar y publicar</span> tu sitio</h2>
+  <div class="section-line"></div>
+  <p style="font-size:0.9rem; color:var(--text-dim); margin-bottom:2.5rem; line-height:1.8;">Esta guía es solo para ti, Humberto. Puedes eliminar esta sección cuando publiques el sitio si no quieres que sea visible — busca el comentario <code style="color:var(--phosphor);">&lt;!-- GUÍA DE MODIFICACIONES --&gt;</code> y borra todo hasta <code style="color:var(--phosphor);">&lt;!-- FIN GUÍA --&gt;</code>.</p>
+
+  <!-- BLOQUE 1: Abrir el archivo -->
+  <div style="background:var(--card); border:1px solid var(--border); border-left:4px solid var(--amber); border-radius:4px; padding:1.5rem; margin-bottom:1.5rem;">
+    <div style="font-family:'Orbitron',monospace; font-size:0.8rem; color:var(--amber); margin-bottom:0.8rem; letter-spacing:0.08em;">① ABRIR Y EDITAR EL ARCHIVO</div>
+    <p style="font-size:0.85rem; line-height:1.8; color:var(--text); opacity:0.9;">
+      El sitio es un solo archivo <strong style="color:var(--amber);">CA2HFW.html</strong>. Para editarlo:<br>
+      1. Clic derecho sobre el archivo → <strong>"Abrir con"</strong> → <strong>Bloc de notas</strong> (o Notepad++, que es mejor)<br>
+      2. Usa <strong>Ctrl+F</strong> para buscar el texto que quieres cambiar<br>
+      3. Edita → guarda con <strong>Ctrl+S</strong><br>
+      4. Abre el archivo en Chrome/Edge para ver el resultado antes de publicar
+    </p>
+  </div>
+
+  <!-- BLOQUE 2: Agregar fotos -->
+  <div style="background:var(--card); border:1px solid var(--border); border-left:4px solid var(--phosphor-dim); border-radius:4px; padding:1.5rem; margin-bottom:1.5rem;">
+    <div style="font-family:'Orbitron',monospace; font-size:0.8rem; color:var(--phosphor); margin-bottom:0.8rem; letter-spacing:0.08em;">② AGREGAR FOTOS NUEVAS</div>
+    <p style="font-size:0.85rem; line-height:1.8; color:var(--text); opacity:0.9; margin-bottom:0.8rem;">
+      <strong style="color:var(--amber);">Opción A — Desde Google Drive (recomendado):</strong><br>
+      1. Sube la foto a tu Drive → clic derecho → <strong>"Obtener enlace"</strong> → Acceso: "Cualquier persona con el enlace"<br>
+      2. Copia el ID de la URL: en <code style="color:var(--phosphor);">drive.google.com/file/d/<u>1ABC...xyz</u>/view</code> el ID es la parte subrayada<br>
+      3. En el HTML reemplaza el ID en: <code style="color:var(--phosphor);">thumbnail?id=<u>AQUÍ_TU_ID</u>&sz=w600</code>
+    </p>
+    <p style="font-size:0.85rem; line-height:1.8; color:var(--text); opacity:0.9;">
+      <strong style="color:var(--amber);">Opción B — Para agregar una foto nueva en la galería:</strong><br>
+      Busca en el HTML: <code style="color:var(--phosphor);">&lt;!-- FOTO 10 --&gt;</code> y copia ese bloque debajo. Cambia el ID de la imagen y el texto del overlay.
+    </p>
+  </div>
+
+  <!-- BLOQUE 3: Agregar diplomas -->
+  <div style="background:var(--card); border:1px solid var(--border); border-left:4px solid var(--amber); border-radius:4px; padding:1.5rem; margin-bottom:1.5rem;">
+    <div style="font-family:'Orbitron',monospace; font-size:0.8rem; color:var(--amber); margin-bottom:0.8rem; letter-spacing:0.08em;">③ AGREGAR UN DIPLOMA NUEVO</div>
+    <p style="font-size:0.85rem; line-height:1.8; color:var(--text); opacity:0.9; margin-bottom:0.6rem;">
+      1. Sube el PDF del diploma a Google Drive → clic derecho → "Obtener enlace"<br>
+      2. Busca en el HTML: <code style="color:var(--phosphor);">&lt;!-- POTA New Year --&gt;</code> y copia ese bloque <code style="color:var(--phosphor);">diploma-card</code><br>
+      3. Cambia el emoji, el título, la descripción y el ID del PDF en el <code style="color:var(--phosphor);">onclick</code>:
+    </p>
+    <div style="font-family:'Share Tech Mono',monospace; font-size:0.72rem; color:var(--phosphor); background:var(--bg); border:1px solid var(--border-green); border-radius:3px; padding:0.8rem 1rem; line-height:1.8;">
+      onclick="window.open('https://drive.google.com/file/d/<span style="color:var(--amber);">ID_DEL_PDF</span>/view','_blank')"
+    </div>
+  </div>
+
+  <!-- BLOQUE 4: Agregar QSL -->
+  <div style="background:var(--card); border:1px solid var(--border); border-left:4px solid var(--phosphor-dim); border-radius:4px; padding:1.5rem; margin-bottom:1.5rem;">
+    <div style="font-family:'Orbitron',monospace; font-size:0.8rem; color:var(--phosphor); margin-bottom:0.8rem; letter-spacing:0.08em;">④ AGREGAR UNA QSL NUEVA</div>
+    <p style="font-size:0.85rem; line-height:1.8; color:var(--text); opacity:0.9;">
+      1. Sube la imagen de la QSL a Google Drive y hazla pública<br>
+      2. Busca en el HTML: <code style="color:var(--phosphor);">&lt;!-- KK7ZZM — USA --&gt;</code><br>
+      3. Copia ese bloque <code style="color:var(--phosphor);">qsl-card</code> y pégalo al final de la grilla<br>
+      4. Reemplaza: el ID de la imagen en <code style="color:var(--phosphor);">thumbnail?id=<u>ID</u></code>, la bandera 🏳️, el país y los datos del QSO en el overlay
+    </p>
+  </div>
+
+  <!-- BLOQUE 5: Publicar en Netlify -->
+  <div style="background:var(--card); border:1px solid var(--border); border-left:4px solid #6496ff; border-radius:4px; padding:1.5rem; margin-bottom:1.5rem;">
+    <div style="font-family:'Orbitron',monospace; font-size:0.8rem; color:#6496ff; margin-bottom:0.8rem; letter-spacing:0.08em;">⑤ PUBLICAR EL SITIO EN INTERNET (GRATIS)</div>
+    <p style="font-size:0.85rem; line-height:1.8; color:var(--text); opacity:0.9; margin-bottom:0.6rem;">
+      <strong style="color:var(--amber);">Con Netlify Drop — la forma más fácil, sin registro:</strong>
+    </p>
+    <div style="font-family:'Share Tech Mono',monospace; font-size:0.75rem; color:var(--text); background:var(--bg); border:1px solid var(--border); border-radius:3px; padding:0.8rem 1rem; line-height:2; margin-bottom:0.8rem;">
+      1. Ve a <span style="color:var(--amber);">netlify.com/drop</span><br>
+      2. Arrastra el archivo <span style="color:var(--phosphor);">CA2HFW.html</span> al recuadro<br>
+      3. ¡Listo! Netlify te da una URL pública en segundos<br>
+      4. Ejemplo: <span style="color:var(--amber);">ca2hfw.netlify.app</span> (puedes personalizar el nombre)
+    </div>
+    <p style="font-size:0.85rem; line-height:1.8; color:var(--text); opacity:0.9;">
+      <strong style="color:var(--amber);">Para actualizar el sitio después:</strong> vuelve a netlify.com/drop y arrastra el archivo modificado. La URL no cambia.
+    </p>
+  </div>
+
+  <!-- BLOQUE 6: Actualizaciones frecuentes -->
+  <div style="background:var(--card); border:1px solid var(--border); border-left:4px solid var(--amber); border-radius:4px; padding:1.5rem;">
+    <div style="font-family:'Orbitron',monospace; font-size:0.8rem; color:var(--amber); margin-bottom:0.8rem; letter-spacing:0.08em;">⑥ CAMBIOS FRECUENTES — GUÍA RÁPIDA</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; font-size:0.8rem;">
+      <div>
+        <div style="color:var(--phosphor); font-family:'Share Tech Mono',monospace; font-size:0.65rem; margin-bottom:0.4rem;">QUÉ CAMBIAR</div>
+        <div style="color:var(--text); opacity:0.85; line-height:2;">
+          Texto "Sobre mí"<br>
+          Números (QSOs, años)<br>
+          Frecuencia en el status bar<br>
+          Entrada en el timeline<br>
+          Artículo del blog<br>
+          Tu foto de perfil
+        </div>
+      </div>
+      <div>
+        <div style="color:var(--amber); font-family:'Share Tech Mono',monospace; font-size:0.65rem; margin-bottom:0.4rem;">QUÉ BUSCAR CON Ctrl+F</div>
+        <div style="color:var(--phosphor); font-family:'Share Tech Mono',monospace; line-height:2; font-size:0.72rem;">
+          Soy Humberto<br>
+          stat-num<br>
+          14.225 MHz<br>
+          timeline-year<br>
+          blog-title<br>
+          cdn-bio.qrz.com
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+<!-- FIN GUÍA -->
+
+
+<footer>
+  <div class="footer-call">CA2HFW</div>
+  <div class="footer-name">Humberto Fuentes Martínez · La Serena, Chile · FG40</div>
+  <div class="footer-morse">-.-. .- ..--- .... ..-. .--</div>
+  <div class="footer-links">
+    <a href="#sobre">Sobre mí</a>
+    <a href="#diplomas">Diplomas</a>
+    <a href="#galeria">Galería</a>
+    <a href="#logros">Logros</a>
+    <a href="#investigacion">Investigación</a>
+    <a href="#visitas">Visitas</a>
+  </div>
+  <div class="footer-copy">73 de CA2HFW · Todos los derechos reservados · sitio construido con HTML puro</div>
+</footer>
+
+<script>
+// LIGHTBOX para fotos y QSLs
+function openLightbox(el) {
+  const img = el.querySelector('img');
+  if (!img) return; // solo funciona cuando hay foto real
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = img.src;
+  lb.style.display = 'flex';
+}
+
+// UTC CLOCK
+function updateClock() {
+  const now = new Date();
+  const utc = now.toUTCString().slice(17, 25);
+  const el = document.getElementById('utc-clock');
+  if (el) el.textContent = 'UTC: ' + utc;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// GUESTBOOK — guardado en localStorage
+const STORAGE_KEY = 'ca2hfw_guestbook';
+
+const defaultEntries = [
+  { call: 'CE3XYZ', qth: 'Santiago, Chile · FF46', msg: '73 Humberto! Siempre un placer escucharte en la banda. Excelente señal desde Santiago. 73!', date: '2025-01-15' },
+  { call: 'LU3XXX', qth: 'Buenos Aires, Argentina', msg: 'Gran página web! Muy buena señal en 20 metros. PSE QSL via bureau. 73 DX!', date: '2025-02-03' },
+  { call: 'PY2XXX', qth: 'São Paulo, Brasil · GG66', msg: 'Excellent signal CA2HFW! FT8 contact confirmed on LoTW. 73!', date: '2025-03-10' }
+];
+
+function loadEntries() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : defaultEntries;
+  } catch(e) { return defaultEntries; }
+}
+
+function saveEntries(entries) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch(e) {}
+}
+
+function renderEntries() {
+  const entries = loadEntries();
+  const container = document.getElementById('entries-list');
+  if (!container) return;
+  container.innerHTML = '';
+  entries.slice().reverse().forEach(e => {
+    const div = document.createElement('div');
+    div.className = 'entry';
+    div.innerHTML = `
+      <div class="entry-header">
+        <span class="entry-call">${escHtml(e.call)}</span>
+        <span class="entry-date">${escHtml(e.date)} · ${escHtml(e.qth)}</span>
+      </div>
+      <div class="entry-text">${escHtml(e.msg)}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function escHtml(t) {
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function addEntry() {
+  const call = document.getElementById('gb-call').value.trim();
+  const qth  = document.getElementById('gb-qth').value.trim();
+  const msg  = document.getElementById('gb-msg').value.trim();
+  if (!call || !msg) { alert('Por favor ingresa tu indicativo y un mensaje.'); return; }
+  const entries = loadEntries();
+  const today = new Date().toISOString().slice(0,10);
+  entries.push({ call, qth: qth || '—', msg, date: today });
+  saveEntries(entries);
+  document.getElementById('gb-call').value = '';
+  document.getElementById('gb-qth').value = '';
+  document.getElementById('gb-msg').value = '';
+  renderEntries();
+  document.getElementById('entries-list').scrollIntoView({ behavior: 'smooth' });
+}
+
+renderEntries();
+
+// Smooth reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('section').forEach(s => {
+  s.style.opacity = '0';
+  s.style.transform = 'translateY(20px)';
+  s.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+  observer.observe(s);
+});
+</script>
+</body>
+</html>
