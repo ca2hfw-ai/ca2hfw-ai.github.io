@@ -85,6 +85,15 @@
     list-style: none;
     display: flex;
     gap: 0.2rem;
+  }  #menu-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--amber);
+    font-size: 1.3rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 3px;
+    cursor: pointer;
   }
 
   nav ul a {
@@ -924,7 +933,23 @@
 
   /* RESPONSIVE */
   @media (max-width: 768px) {
-    nav ul { display: none; }
+    #menu-toggle {
+      display: block;
+    }
+    nav ul {
+      display: none;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background: rgba(6,11,20,0.98);
+      flex-direction: column;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    nav ul.active {
+      display: flex;
+    }
     #sobre .about-grid { grid-template-columns: 1fr; }
     #galeria .photo-grid { grid-template-columns: 1fr; }
     .photo-item.wide { grid-column: auto; }
