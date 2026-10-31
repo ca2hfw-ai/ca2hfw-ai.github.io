@@ -1603,30 +1603,23 @@ updateClock();
 
 // GUESTBOOK — guardado en localStorage
 const STORAGE_KEY = 'ca2hfw_guestbook';
-
-const defaultEntries = [
+// LIBRO DE VISITAS — mensajes aprobados manualmente
+// Para agregar un mensaje nuevo: copia un bloque { } y pégalo aquí con los datos del mensaje que apruebes
+const entriesAprobadas = [
   { call: 'CE3XYZ', qth: 'Santiago, Chile · FF46', msg: '73 Humberto! Siempre un placer escucharte en la banda. Excelente señal desde Santiago. 73!', date: '2025-01-15' },
   { call: 'LU3XXX', qth: 'Buenos Aires, Argentina', msg: 'Gran página web! Muy buena señal en 20 metros. PSE QSL via bureau. 73 DX!', date: '2025-02-03' },
   { call: 'PY2XXX', qth: 'São Paulo, Brasil · GG66', msg: 'Excellent signal CA2HFW! FT8 contact confirmed on LoTW. 73!', date: '2025-03-10' }
 ];
 
-function loadEntries() {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : defaultEntries;
-  } catch(e) { return defaultEntries; }
-}
-
-function saveEntries(entries) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch(e) {}
+function escHtml(t) {
+  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function renderEntries() {
-  const entries = loadEntries();
   const container = document.getElementById('entries-list');
   if (!container) return;
   container.innerHTML = '';
-  entries.slice().reverse().forEach(e => {
+  entriesAprobadas.slice().reverse().forEach(e => {
     const div = document.createElement('div');
     div.className = 'entry';
     div.innerHTML = `
@@ -1638,26 +1631,6 @@ function renderEntries() {
     `;
     container.appendChild(div);
   });
-}
-
-function escHtml(t) {
-  return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function addEntry() {
-  const call = document.getElementById('gb-call').value.trim();
-  const qth  = document.getElementById('gb-qth').value.trim();
-  const msg  = document.getElementById('gb-msg').value.trim();
-  if (!call || !msg) { alert('Por favor ingresa tu indicativo y un mensaje.'); return; }
-  const entries = loadEntries();
-  const today = new Date().toISOString().slice(0,10);
-  entries.push({ call, qth: qth || '—', msg, date: today });
-  saveEntries(entries);
-  document.getElementById('gb-call').value = '';
-  document.getElementById('gb-qth').value = '';
-  document.getElementById('gb-msg').value = '';
-  renderEntries();
-  document.getElementById('entries-list').scrollIntoView({ behavior: 'smooth' });
 }
 
 renderEntries();
