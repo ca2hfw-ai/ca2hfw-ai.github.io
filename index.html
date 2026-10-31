@@ -1587,7 +1587,7 @@ function openLightbox(el) {
   const img = el.querySelector('img');
   if (!img) return; // solo funciona cuando hay foto real
   const lb = document.getElementById('lightbox');
-    document.getElementById('lightbox-img').src = img.src;
+    document.getElementById('lightbox-img').src = img.src.replace(/sz=w\d+/, 'sz=w2000');
   lb.style.display = 'flex';
 }
 
